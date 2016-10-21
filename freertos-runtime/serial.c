@@ -118,22 +118,10 @@ static void mmio_write32(void *addr, uint32_t val)
 
 sio_fd_t serial_open(void)
 {
-	unsigned divisor = DIV_ROUND_CLOSEST(UART_CLK, 16 * UART_BAUDRATE);
   sio_fd_t uart_base = (void*)UART7_BASE;
 
   //Initialisation in uart_init in uart-tegra.h 
   uart_base += 0x300; 
-
-	mmio_write32(uart_base + UART_LCR, UART_LCR_8N1);
-	mmio_write32(uart_base + UART_IER, 0); /* IRQ off */
-	mmio_write32(uart_base + UART_FCR, 7); /* FIFO reset and enable */
-	mmio_write32(uart_base + UART_MCR, 7); /* DTR + RTS on */
-	/* Set Divisor Latch Access Bit */
-	mmio_write32(uart_base + UART_LCR, UART_LCR_DLAB | mmio_read32(uart_base + UART_LCR));
-	/* Program baudrate */
-	mmio_write32(uart_base + UART_DLL, 0xff & divisor); /* Divisor Latch Low Register */
-	mmio_write32(uart_base + UART_DLM, 0xff & (divisor >> 8)); /* Divisor Latch High Register */
-	mmio_write32(uart_base + UART_LCR, ~UART_LCR_DLAB & mmio_read32(uart_base + UART_LCR));
   return uart_base;
 }
 
