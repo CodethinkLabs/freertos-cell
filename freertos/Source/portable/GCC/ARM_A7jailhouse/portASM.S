@@ -52,7 +52,7 @@
     licensing and training services.
 */
 
-#define SUNXI_UART7_BASE 0x01c29c00
+#define TEGRA_UART_BASE 0x70006000
 
 	.text
 	.arm
@@ -191,8 +191,8 @@ vPortInstallFreeRTOSVectorTable:
 
 #if 0
 	push {r4,r5}
-	movw	r4, #(SUNXI_UART7_BASE & 0xffff)
-	movt	r4, #(SUNXI_UART7_BASE >> 16)
+	movw	r4, #(TEGRA_UART_BASE & 0xffff)
+	movt	r4, #(TEGRA_UART_BASE >> 16)
 	mov	r5, #'%'
 	str	r5, [r4]
 	pop {r4,r5}
