@@ -571,10 +571,14 @@ static void prvSetupHardware(void)
   if(USE_CACHE_MMU) hardware_mmu_ptable_setup(io_dev_map, ARRAY_SIZE(io_dev_map));
   if(USE_CACHE_MMU) hardware_cpu_cache_mmu_enable();
   /* Replace the exception vector table by a FreeRTOS variant */
+  printf("Installing FreeRTOS vector table\n");
   vPortInstallFreeRTOSVectorTable();
+  printf("Enabling hardware fpu\n");
   hardware_fpu_enable();
+  printf("Enabling UART IRQ\n");
   uart_irq_enable();
   serial_irq_rx_enable(ser_dev);
+  printf("Reading timer frequency\n");
   arm_read_sysreg(CNTFRQ, timer_frq);
   if(!timer_frq) {
     printf("Timer frequency is zero\n");
