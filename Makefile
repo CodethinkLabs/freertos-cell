@@ -9,8 +9,7 @@ LD = $(CROSS_COMPILE)ld
 AR = $(CROSS_COMPILE)ar
 OBJCOPY = $(CROSS_COMPILE)objcopy
 
-CFLAGS += -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=vfpv4-d16 -mfloat-abi=hard -O2
-CFLAGS += -DCONFIG_MACH_SUN7I=1
+CFLAGS += -mcpu=cortex-a15 -mtune=cortex-a15 -mfloat-abi=hard -O2
 CFLAGS += -Wall -MMD -pipe
 CFLAGS += -I $(src) -I $(src)/freertos/Source/include -I $(src)/freertos-runtime -I $(src)/freertos/Source/portable/GCC/ARM_A7jailhouse
 
@@ -27,7 +26,8 @@ FREERTOS_OBJS = freertos/Source/queue.o \
 	freertos/Source/portable/GCC/ARM_A7jailhouse/gic-v2.o \
 	freertos/Source/portable/GCC/ARM_A7jailhouse/portASM.o \
 	freertos/Source/timers.o \
-	freertos/Source/tasks.o
+	freertos/Source/tasks.o \
+	A15_asm/fpu.o
 
 FREERTOS_RUNTIME_OBJS = freertos-runtime/string.o \
 	freertos-runtime/serial.o \

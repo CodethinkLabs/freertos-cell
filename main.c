@@ -85,6 +85,10 @@
 #include "semphr.h"
 /* }}} */
 
+/* ASM includes */
+#include "A15_asm/fpu.h"
+
+
 /* {{{1 Defines */
 #define TIMER_IRQ 27
 #define BEATS_PER_SEC configTICK_RATE_HZ
@@ -416,19 +420,7 @@ static void floatTask( void *pvParameters )
 /* {{{1 Hardware init */
 static void hardware_fpu_enable(void)
 {
-  unsigned reg;
-  /* Enable the VFP */
-  asm volatile("mrc	p15, 0, %0, c1, c0, 2;" /* Read Coprocessor Access Control Register CPACR */
-      "orr	%0, %0, #(0x3 << 20);"    /* Enable access to cp10 */
-      "orr	%0, %0, #(0x3 << 22);"    /* Enable access to cp11 */
-      "mcr	p15, 0, %0, c1, c0, 2;"
-      "fmrx	%0, FPEXC;"
-      "orr	%0, %0, #(1<<30);"  /* Set FPEXC.EN = 1 */
-      "fmxr	FPEXC, %0;"
-      : "=r" (reg) /* outputs */
-      : /* No inputs */
-      : /* clobbered */
-      );
+    //fpu_enable();
 }
 
 static void hardware_cpu_cache_mmu_enable(void)
