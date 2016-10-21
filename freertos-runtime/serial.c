@@ -77,13 +77,7 @@
 #include <string.h>
 #include "serial.h"
 
-#ifndef CONFIG_MACH_SUN7I
-#error Only support for Banana Pi board at the moment
-#endif
-
-#define UART7_BASE 0x01C29C00
-#define UART_CLOCK_REG	((void *)0x01c2006c)
-#define UART_GATE_NR	23
+#define UART7_BASE 0x70006000 //This is for the TK1
 
 #define UART_TX			0x0
 #define UART_DLL		0x0
@@ -127,9 +121,8 @@ sio_fd_t serial_open(void)
 	unsigned divisor = DIV_ROUND_CLOSEST(UART_CLK, 16 * UART_BAUDRATE);
   sio_fd_t uart_base = (void*)UART7_BASE;
 
-  mmio_write32(UART_CLOCK_REG,
-      mmio_read32(UART_CLOCK_REG) |
-      (1 << UART_GATE_NR));
+  //Initialisation in uart_init in uart-tegra.h 
+  uart_base += 0x300; 
 
 	mmio_write32(uart_base + UART_LCR, UART_LCR_8N1);
 	mmio_write32(uart_base + UART_IER, 0); /* IRQ off */
