@@ -177,11 +177,12 @@ void __div0(void)
 /* {{{1 LED control */
 static void led_toggle(void)
 {
-#ifdef CONFIG_MACH_SUN7I
-#define PIO_BASE ((void*)0x01c20800)
-  uint32_t *led_reg = PIO_BASE + 7*0x24 + 0x10;
-  *led_reg ^= 1<<24;
-#endif
+    printk("I am 'blinking' on a FreeRTOS cell!\n");
+//#ifdef CONFIG_MACH_SUN7I
+//#define PIO_BASE ((void*)0x01c20800)
+//  uint32_t *led_reg = PIO_BASE + 7*0x24 + 0x10;
+//  *led_reg ^= 1<<24;
+//#endif
 }
 /* }}} */
 
