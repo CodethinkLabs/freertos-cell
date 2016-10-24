@@ -79,6 +79,7 @@
 #include "task.h"
 
 #include "gic-v2.h"
+#include "printf-stdarg.h"
 
 #ifndef configUNIQUE_INTERRUPT_PRIORITIES
 	#error configUNIQUE_INTERRUPT_PRIORITIES must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
@@ -322,41 +323,6 @@ extern void FreeRTOS_SWI_Handler(void);
 BaseType_t xPortStartScheduler( void )
 {
   uint32_t ulAPSR;
-
-	#if( configASSERT_DEFINED == 1 )
-	{
-		volatile uint32_t ulOriginalPriority;
-		volatile uint8_t * const pucFirstUserPriorityRegister = ( volatile uint8_t * const ) ( gic_v2_gicd_get_address() + portINTERRUPT_PRIORITY_REGISTER_OFFSET );
-		volatile uint8_t ucMaxPriorityValue;
-
-		/* Determine how many priority bits are implemented in the GIC.
-
-		Save the interrupt priority value that is about to be clobbered. */
-		ulOriginalPriority = *pucFirstUserPriorityRegister;
-
-		/* Determine the number of priority bits available.  First write to
-		all possible bits. */
-		*pucFirstUserPriorityRegister = portMAX_8_BIT_VALUE;
-
-		/* Read the value back to see how many bits stuck. */
-		ucMaxPriorityValue = *pucFirstUserPriorityRegister;
-
-		/* Shift to the least significant bits. */
-		while( ( ucMaxPriorityValue & portBIT_0_SET ) != portBIT_0_SET )
-		{
-			ucMaxPriorityValue >>= ( uint8_t ) 0x01;
-		}
-
-		/* Sanity check configUNIQUE_INTERRUPT_PRIORITIES matches the read
-		value. */
-		configASSERT( ucMaxPriorityValue == portLOWEST_INTERRUPT_PRIORITY );
-
-		/* Restore the clobbered interrupt priority register to its original
-		value. */
-		*pucFirstUserPriorityRegister = ulOriginalPriority;
-	}
-	#endif /* conifgASSERT_DEFINED */
-
   ulICCIAR = ulICCEOIR = ulICCPMR = (uint32_t) gic_v2_gicc_get_address();
   ulICCIAR  += portICCIAR_INTERRUPT_ACKNOWLEDGE_OFFSET;
   ulICCEOIR += portICCEOIR_END_OF_INTERRUPT_OFFSET;
@@ -388,6 +354,7 @@ BaseType_t xPortStartScheduler( void )
 			configSETUP_TICK_INTERRUPT();
 
 			/* Start the first task executing. */
+            debug_print("...Starting first task executing...\n");
 			vPortRestoreTaskContext();
 		}
 	}
@@ -397,6 +364,7 @@ BaseType_t xPortStartScheduler( void )
 	possible value.  prvTaskExitError() is referenced to prevent a compiler
 	warning about it being defined but not referenced in the case that the user
 	defines their own exit address. */
+    debug_print("....ERROR... prvTaskExitError\n");
 	( void ) prvTaskExitError;
 	return 0;
 }

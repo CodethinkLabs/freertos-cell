@@ -10,7 +10,7 @@ AR = $(CROSS_COMPILE)ar
 OBJCOPY = $(CROSS_COMPILE)objcopy
 
 CFLAGS += -mcpu=cortex-a15 -mtune=cortex-a15 -mfloat-abi=hard -O2
-CFLAGS += -Wall -MMD -pipe
+CFLAGS += -Wall -MMD -pipe -std=gnu99
 CFLAGS += -I $(src) -I $(src)/freertos/Source/include -I $(src)/freertos-runtime -I $(src)/freertos/Source/portable/GCC/ARM_A7jailhouse
 
 LDFLAGS += -T lscript.lds

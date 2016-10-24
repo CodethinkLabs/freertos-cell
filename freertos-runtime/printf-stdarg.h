@@ -77,4 +77,16 @@ int puts(const char *s);
 int printf(const char *format, ...);
 int sprintf(char *out, const char *format, ...);
 int snprintf( char *buf, unsigned int count, const char *format, ... );
+
+
+//From http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing
+#ifdef DEBUG
+#define DEBUG_TEST 1
+#else
+#define DEBUG_TEST 0
+#endif
+
+#define debug_print(fmt, ...) \
+                do { if (DEBUG_TEST) printf(fmt, ## __VA_ARGS__); } while (0)
+
 #endif

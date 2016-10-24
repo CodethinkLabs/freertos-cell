@@ -76,6 +76,9 @@ all the API functions to use the MPU wrappers.  That should only be done when
 task.h is included from an application file. */
 #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
+/* freertos-runtime includes */
+#include "printf-stdarg.h"
+
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -1867,12 +1870,15 @@ BaseType_t xReturn;
 
 	#if ( configUSE_TIMERS == 1 )
 	{
+        debug_print("...Configuration of timers started\n...");
 		if( xReturn == pdPASS )
 		{
+            debug_print("...xReturn = xTimerCreate...\n");
 			xReturn = xTimerCreateTimerTask();
 		}
 		else
 		{
+            debug_print("...mtCOVERAGE_TEST_MARKER...\n");
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
@@ -1885,6 +1891,7 @@ BaseType_t xReturn;
 		the created tasks contain a status word with interrupts switched on
 		so interrupts will automatically get re-enabled when the first task
 		starts to run. */
+        debug_print("...Disabling interrupts...\n");
 		portDISABLE_INTERRUPTS();
 
 		#if ( configUSE_NEWLIB_REENTRANT == 1 )
@@ -1906,6 +1913,7 @@ BaseType_t xReturn;
 
 		/* Setting up the timer tick is hardware specific and thus in the
 		portable interface. */
+        debug_print("...Starting xPortStartScheduler...\n");
 		if( xPortStartScheduler() != pdFALSE )
 		{
 			/* Should not reach here as if the scheduler is running the

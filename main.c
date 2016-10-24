@@ -557,20 +557,20 @@ static void prvSetupHardware(void)
   ser_dev = serial_open();
   io_dev_map[0] = (unsigned long)ser_dev;
   show_cache_mmu_status("MMU/Cache status at entry");
-  printf("Initializing the HW...\n");
+  debug_print("Initializing the HW...\n");
   if(USE_CACHE_MMU) hardware_cpu_caches_off();
   io_dev_map[1] = (unsigned long)gic_v2_init();
   if(USE_CACHE_MMU) hardware_mmu_ptable_setup(io_dev_map, ARRAY_SIZE(io_dev_map));
   if(USE_CACHE_MMU) hardware_cpu_cache_mmu_enable();
   /* Replace the exception vector table by a FreeRTOS variant */
-  printf("Installing FreeRTOS vector table\n");
+  debug_print("...Installing FreeRTOS vector table...\n");
   vPortInstallFreeRTOSVectorTable();
-  printf("Enabling hardware fpu\n");
+  debug_print("...Enabling hardware fpu...\n");
   hardware_fpu_enable();
-  printf("Enabling UART IRQ\n");
+  debug_print("...Enabling UART IRQ...\n");
   uart_irq_enable();
   serial_irq_rx_enable(ser_dev);
-  printf("Reading timer frequency\n");
+  debug_print("...Reading timer frequency...\n");
   arm_read_sysreg(CNTFRQ, timer_frq);
   if(!timer_frq) {
     printf("Timer frequency is zero\n");
@@ -578,7 +578,7 @@ static void prvSetupHardware(void)
   }
   asm volatile ( "mrs %0, apsr" : "=r" ( apsr ) );
   apsr &= 0x1f;
-  printf("FreeRTOS inmate cpu-mode=%x\n", apsr);
+  debug_print("...FreeRTOS inmate cpu-mode=%x\n...", apsr);
   show_cache_mmu_status("MMU/Cache status at runtime");
 }
 /* }}} */
@@ -608,36 +608,7 @@ void inmate_main(void)
         prio, /* The priority assigned to the task. */
         NULL );								    /* The task handle is not required, so NULL is passed. */
   }
-
-  if(1) { /* Task notification test */
-    TaskHandle_t recv_task_handle;
-    xTaskCreate( recvTask, /* The function that implements the task. */
-        "receive", /* The text name assigned to the task - for debug only; not used by the kernel. */
-        configMINIMAL_STACK_SIZE, /* The size of the stack to allocate to the task. */
-        NULL, 								/* The parameter passed to the task */
-        configMAX_PRIORITIES-2, /* The priority assigned to the task. */
-        &recv_task_handle );		/* The task handle */
-    xTaskCreate( sendTask, /* The function that implements the task. */
-        "sender", /* The text name assigned to the task - for debug only; not used by the kernel. */
-        configMINIMAL_STACK_SIZE, /* The size of the stack to allocate to the task. */
-        recv_task_handle, 				/* The parameter passed to the task */
-        configMAX_PRIORITIES-1, /* The priority assigned to the task. */
-        NULL );								    /* The task handle is not required, so NULL is passed. */
-  }
-  xTaskCreate( blinkTask, /* The function that implements the task. */
-      "blink", /* The text name assigned to the task - for debug only; not used by the kernel. */
-      configMINIMAL_STACK_SIZE, /* The size of the stack to allocate to the task. */
-      NULL, 								/* The parameter passed to the task */
-      tskIDLE_PRIORITY, /* The priority assigned to the task. */
-      NULL );								    /* The task handle is not required, so NULL is passed. */
-  if(1) for(i = 0; i < 2; i++) {
-    xTaskCreate( floatTask, /* The function that implements the task. */
-        "float", /* The text name assigned to the task - for debug only; not used by the kernel. */
-        configMINIMAL_STACK_SIZE, /* The size of the stack to allocate to the task. */
-        (void*)i, 								/* The parameter passed to the task */
-        tskIDLE_PRIORITY+1, /* The priority assigned to the task. */
-        NULL );								    /* The task handle is not required, so NULL is passed. */
-  }
+  
   printf("vTaskStartScheduler goes active\n");
   vTaskStartScheduler();
   printf("vTaskStartScheduler terminated: strange!!!\n");
