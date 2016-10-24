@@ -3,6 +3,7 @@
 src = $(CURDIR)
 
 CROSS_COMPILE ?= arm-linux-gnueabihf-
+INSTALL_DIR ?= /usr/local
 
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)ld
@@ -54,6 +55,10 @@ $(RUNTIME_AR): $(RUNTIME_OBJS)
 
 clean:
 	rm -f $(OBJS) $(EXE_STEM).elf $(EXE_STEM).bin $(RUNTIME_OBJS) $(RUNTIME_AR)
+
+install:
+	mkdir -p $(INSTALL_DIR)
+	cp $(EXE_STEM).bin $(INSTALL_DIR)
 
 distclean: clean
 	rm -f $(DEPS)
