@@ -24,13 +24,6 @@ struct {
   },
 
   .mem_regions = {
-    /* HACK: Clock and Reset Controller */ {
-      .phys_start = 0x60006000,
-      .virt_start = 0x60006000,
-      .size = 0x00001000,
-      .flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE |
-                            JAILHOUSE_MEM_IO,
-    },
     /* UART */ {
       .phys_start = 0x70006000,
       .virt_start = 0x70006000,
